@@ -19,6 +19,7 @@
         <module>spring-ai-chat-openai</module>
         <module>spring-ai-chat-deepseek</module>
         <module>spring-ai-chat-doubao</module>
+        <module>spring-ai-chat-minimax</module>
         <module>spring-ai-chat-qwen</module>
         <module>spring-ai-chat-multi</module>
         <module>spring-ai-chat-multi-openai</module>
