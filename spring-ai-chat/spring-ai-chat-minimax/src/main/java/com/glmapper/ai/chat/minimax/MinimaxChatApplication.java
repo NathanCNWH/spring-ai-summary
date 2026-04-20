@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class QwenChatApplication {
+public class MinimaxChatApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(QwenChatApplication.class, args);
+        SpringApplication.run(MinimaxChatApplication.class, args);
     }
 
 }
