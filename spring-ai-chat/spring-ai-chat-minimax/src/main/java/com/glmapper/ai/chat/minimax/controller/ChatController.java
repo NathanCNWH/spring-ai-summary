@@ -2,6 +2,7 @@ package com.glmapper.ai.chat.minimax.controller;
 
 import com.glmapper.ai.chat.minimax.advisor.SimpleAdvisor;
 import com.glmapper.ai.chat.minimax.controller.request.StreamChatRequest;
+import com.glmapper.ai.chat.minimax.dto.User;
 import com.glmapper.ai.chat.minimax.service.MultiClientService;
 import com.glmapper.ai.chat.minimax.service.TemplateService;
 import org.springframework.ai.chat.client.ChatClient;
@@ -107,5 +108,25 @@ public class ChatController {
                         .user(request.getUserInput())
                         .stream()
                         .content());
+    }
+
+    /**
+     * AI内容转对象
+     *
+     * @return 返回内容
+     */
+    @GetMapping("/chattoJson")
+    public String chattoJson() {
+
+
+        //非思考模型可以直接输出，但是思考模型必须手动去掉think标签
+        String userInput = "请将下面内容转为json格式，"+
+                "  \"name\": \"张三\",\n" +
+                "  \"age\": 18,\n 注意，只输出json，不要输出其他内容" ;
+
+        User entity = this.chatClient.prompt().user(userInput)
+                .call().entity(User.class);
+        System.out.println(entity);
+        return entity.toString();
     }
 }
