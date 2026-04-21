@@ -1,5 +1,7 @@
 package com.glmapper.ai.chat.minimax.controller;
 
+import com.glmapper.ai.chat.minimax.advisor.SimpleAdvisor;
+import com.glmapper.ai.chat.minimax.service.MultiClientService;
 import com.glmapper.ai.chat.minimax.service.TemplateService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,10 @@ public class ChatController {
     private ChatClient chatClient;
     @Autowired
     private TemplateService templateService;
+    @Autowired
+    private SimpleAdvisor simpleAdvisor;
+    @Autowired
+    private MultiClientService multiClientService;
 
     /**
      * 普通的聊天接口
@@ -42,5 +48,24 @@ public class ChatController {
     @GetMapping("/chatPrompt")
     public String chatPrompt(@RequestParam String userInput,@RequestParam Integer type) {
         return templateService.chatPrompt(userInput,type);
+    }
+    /**
+     * advisor拦截器
+     *
+     * @param userInput 用户输入
+     * @return 返回内容
+     */
+    @GetMapping("/chat_advisor")
+    public String chat_advisor(@RequestParam String userInput) {
+        return chatClient.prompt().advisors(simpleAdvisor).user(userInput).call().content();
+    }
+    /**
+     * 多配置
+     *
+     * @return 返回内容
+     */
+    @GetMapping("/chat_multi")
+    public String chat_multi() {
+        return multiClientService.multiClientFlow();
     }
 }
