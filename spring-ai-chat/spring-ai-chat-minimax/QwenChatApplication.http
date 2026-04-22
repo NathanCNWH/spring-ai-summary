@@ -1,0 +1,21 @@
+###chat
+GET http://localhost:8085/api/minimax/chat?userInput=你好
+
+<> 2026-04-20T220733.200.txt
+
+###chatPrompt
+GET http://localhost:8085/api/minimax/chatPrompt?userInput=你好&type=2
+
+<> 2026-04-20T231838.200.txt
+<> 2026-04-20T231830.200.txt
+<> 2026-04-20T231824.200.txt
+<> 2026-04-20T231020.200.txt
+
+###chattoJson
+GET http://localhost:8085/api/minimax/chattoJson
+
+<> 2026-04-21T224104.500.json
+<> 2026-04-21T223954.500.json
+
+###vision
+GET http://localhost:8085/api/minimax/vision?question=描述图片&imageUrl=https://ark-project.tos-cn-beijing.volces.com/doc_image/ark_demo_img_1.png

@@ -1,5 +1,7 @@
 package com.glmapper.ai.chat.minimax.service;
 
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -7,6 +9,8 @@ import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.net.MalformedURLException;
 
 @Component
 public class MultiClientService {
@@ -39,25 +43,30 @@ public class MultiClientService {
      * @param question 问题/指令
      * @return AI回答
      */
-    public String imageClientFlow(String imageUrl, String question) {
-        // 豆包 Responses API 配置
+    public String imageClientFlow(String imageUrl, String question) throws MalformedURLException {
+        // 豆包 Chat Completions API 配置
         OpenAiApi doubaoApi = baseOpenAiApi.mutate()
-                .baseUrl("https://ark.cn-beijing.volces.com/api/v3")
-                .apiKey(System.getenv("DOUBAO_KEY"))
-                .completionsPath("/api/v3/responses")
+                .baseUrl("https://ark.cn-beijing.volces.com")
+                .apiKey(System.getenv("ARK_API_KEY"))
+                .completionsPath("/api/v3/chat/completions")
                 .build();
 
         OpenAiChatModel doubaoModel = baseChatModel.mutate()
                 .openAiApi(doubaoApi)
                 .defaultOptions(OpenAiChatOptions.builder()
                         .model("doubao-seed-2-0-mini-260215")
-                        .temperature(0.5)
                         .build())
                 .build();
 
         // 构建多模态消息：图片 + 文本
-        String content = question + "\n\n![image](" + imageUrl + ")";
-        UserMessage userMessage = new UserMessage(content);
+        JSONArray content = new JSONArray();
+        content.add(JSONObject.of("type", "input_image")
+                .fluentPut("image_url", java.net.URI.create(imageUrl).toURL().toString())
+        );
+        content.add(JSONObject.of("type", "input_text")
+                .fluentPut("text", question)
+        );
+        UserMessage userMessage = new UserMessage(content.toJSONString());
 
         return ChatClient.builder(doubaoModel).build()
                 .prompt()

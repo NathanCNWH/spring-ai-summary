@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
+import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -46,7 +47,7 @@ public class ChatController {
      */
     @GetMapping("/vision")
     public String vision(@RequestParam String imageUrl,
-                        @RequestParam(defaultValue = "描述这张图片") String question) {
+                        @RequestParam(defaultValue = "描述这张图片") String question) throws MalformedURLException {
         return multiClientService.imageClientFlow(imageUrl, question);
     }
 
