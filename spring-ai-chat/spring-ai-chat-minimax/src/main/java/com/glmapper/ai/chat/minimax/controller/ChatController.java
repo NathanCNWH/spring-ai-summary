@@ -38,6 +38,19 @@ public class ChatController {
     private MultiClientService multiClientService;
 
     /**
+     * 图片识别接口（多模态）- 使用豆包 Responses API
+     *
+     * @param imageUrl 图片URL地址
+     * @param question 关于图片的问题
+     * @return 图片描述/回答
+     */
+    @GetMapping("/vision")
+    public String vision(@RequestParam String imageUrl,
+                        @RequestParam(defaultValue = "描述这张图片") String question) {
+        return multiClientService.imageClientFlow(imageUrl, question);
+    }
+
+    /**
      * 普通的聊天接口
      *
      * @param userInput 用户输入
