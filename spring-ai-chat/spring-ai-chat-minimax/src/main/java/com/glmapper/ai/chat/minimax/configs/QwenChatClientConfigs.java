@@ -22,8 +22,8 @@ public class QwenChatClientConfigs {
      * @param chatModel
      * @return ChatClient
      */
-    @Bean
-    public ChatClient chatClient(OpenAiChatModel chatModel) {
+    @Bean("defaultChatClient")
+    public ChatClient defaultChatClient(OpenAiChatModel chatModel) {
         //return ChatClient.builder(chatModel).build();
         // build with Default System Text
         return ChatClient.builder(chatModel)

@@ -1,6 +1,5 @@
 package com.glmapper.ai.chat.minimax.configs;
 
-import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,15 +15,34 @@ import org.springframework.context.annotation.Configuration;
 public class MultiOpenaiChatClientConfigs {
 
     /**
-     * 这里配置一个默认的 OpenAI API 客户端；这里参考了官方文档，但是官方文档中是自动注入 baseOpenAiApi，实际上有问题
-     * 因为 OpenAiApi 并没有在自动配置中注册，所以需要手动创建一个 Bean。
+     * 仅提供 chat_multi 使用的代码侧配置，避免将 OpenAiApi 这类基础 Bean 暴露给容器，
+     * 从而影响 spring.ai.openai.* 的自动配置链路。
      *
-     * @return OpenAiApi
+     * @return MultiOpenaiCodeProperties
      */
-    @Bean
-    public OpenAiApi baseOpenAiApi() {
-        return OpenAiApi.builder()
-                .apiKey(System.getenv("MINIMAX_API_KEY"))
-                .build();
+    @Bean("multiOpenaiCodeProperties")
+    public MultiOpenaiCodeProperties multiOpenaiCodeProperties() {
+        return new MultiOpenaiCodeProperties(
+                System.getenv("MINIMAX_API_KEY"),
+                "https://api.minimaxi.com",
+                "/v1/chat/completions",
+                "MiniMax-M2.7-highspeed",
+                System.getenv("ARK_API_KEY"),
+                "https://ark.cn-beijing.volces.com",
+                "/api/v3/chat/completions",
+                "doubao-seed-2-0-mini-260215"
+        );
+    }
+
+    public record MultiOpenaiCodeProperties(
+            String minimaxApiKey,
+            String minimaxBaseUrl,
+            String minimaxCompletionsPath,
+            String minimaxModel,
+            String doubaoApiKey,
+            String doubaoBaseUrl,
+            String doubaoCompletionsPath,
+            String doubaoModel
+    ) {
     }
 }

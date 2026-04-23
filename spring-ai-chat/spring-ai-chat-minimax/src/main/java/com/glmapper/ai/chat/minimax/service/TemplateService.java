@@ -3,6 +3,7 @@ package com.glmapper.ai.chat.minimax.service;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.template.st.StTemplateRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,6 +11,7 @@ public class TemplateService {
 
 
     @Autowired
+    @Qualifier("defaultChatClient")
     private ChatClient chatClient;
 
 

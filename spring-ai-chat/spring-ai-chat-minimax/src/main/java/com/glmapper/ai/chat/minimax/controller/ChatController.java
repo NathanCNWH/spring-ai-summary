@@ -7,6 +7,7 @@ import com.glmapper.ai.chat.minimax.service.MultiClientService;
 import com.glmapper.ai.chat.minimax.service.TemplateService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 public class ChatController {
 
     @Autowired
+    @Qualifier("defaultChatClient")
     private ChatClient chatClient;
     @Autowired
     private TemplateService templateService;
@@ -132,7 +134,6 @@ public class ChatController {
     @GetMapping("/chattoJson")
     public String chattoJson() {
 
-
         //非思考模型可以直接输出，但是思考模型必须手动去掉think标签
         String userInput = "请将下面内容转为json格式，"+
                 "  \"name\": \"张三\",\n" +
@@ -140,7 +141,6 @@ public class ChatController {
 
         User entity = this.chatClient.prompt().user(userInput)
                 .call().entity(User.class);
-        System.out.println(entity);
         return entity.toString();
     }
 }

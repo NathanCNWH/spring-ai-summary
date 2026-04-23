@@ -1,5 +1,6 @@
 package com.glmapper.ai.chat.minimax.service;
 
+import com.glmapper.ai.chat.minimax.configs.MultiOpenaiChatClientConfigs.MultiOpenaiCodeProperties;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.content.Media;
@@ -7,6 +8,7 @@ import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
@@ -21,35 +23,38 @@ public class MultiClientService {
     private OpenAiChatModel baseChatModel;
 
     @Autowired
-    private OpenAiApi baseOpenAiApi;
+    @Qualifier("multiOpenaiCodeProperties")
+    private MultiOpenaiCodeProperties multiOpenaiCodeProperties;
 
     public String multiClientFlow() {
-        //这里可以覆盖初始配置
-        OpenAiApi deepseekApi = baseOpenAiApi.mutate()
-                .baseUrl("https://api.minimaxi.com")
-                .completionsPath("/v1/chat/completions")
+        OpenAiApi minimaxApi = OpenAiApi.builder()
+                .apiKey(multiOpenaiCodeProperties.minimaxApiKey())
+                .baseUrl(multiOpenaiCodeProperties.minimaxBaseUrl())
+                .completionsPath(multiOpenaiCodeProperties.minimaxCompletionsPath())
                 .build();
 
-        OpenAiChatModel deepseekModel = baseChatModel.mutate()
-                .openAiApi(deepseekApi)
-                .defaultOptions(OpenAiChatOptions.builder().model("MiniMax-M2.7-highspeed").temperature(0.5).build())
+        OpenAiChatModel minimaxModel = baseChatModel.mutate()
+                .openAiApi(minimaxApi)
+                .defaultOptions(OpenAiChatOptions.builder()
+                        .model(multiOpenaiCodeProperties.minimaxModel())
+                        .temperature(0.5)
+                        .build())
                 .build();
 
-        return ChatClient.builder(deepseekModel).build().prompt("你好").call().content();
+        return ChatClient.builder(minimaxModel).build().prompt("你好").call().content();
     }
 
     public String imageClientFlowMedia(String imageUrl, String question) throws MalformedURLException {
-        // 豆包 Chat Completions API 配置
-        OpenAiApi doubaoApi = baseOpenAiApi.mutate()
-                .baseUrl("https://ark.cn-beijing.volces.com")
-                .apiKey(System.getenv("ARK_API_KEY"))
-                .completionsPath("/api/v3/chat/completions")
+        OpenAiApi doubaoApi = OpenAiApi.builder()
+                .apiKey(multiOpenaiCodeProperties.doubaoApiKey())
+                .baseUrl(multiOpenaiCodeProperties.doubaoBaseUrl())
+                .completionsPath(multiOpenaiCodeProperties.doubaoCompletionsPath())
                 .build();
 
         OpenAiChatModel doubaoModel = baseChatModel.mutate()
                 .openAiApi(doubaoApi)
                 .defaultOptions(OpenAiChatOptions.builder()
-                        .model("doubao-seed-2-0-mini-260215")
+                        .model(multiOpenaiCodeProperties.doubaoModel())
                         .build())
                 .build();
 
