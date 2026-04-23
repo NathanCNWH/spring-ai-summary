@@ -4,13 +4,17 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.content.Media;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.util.List;
 
 @Component
 public class MultiClientService {
@@ -38,6 +42,7 @@ public class MultiClientService {
 
     /**
      * 豆包视觉识别（使用 Responses API 格式）
+     * 直接使用 RestClient 发送请求，避免 ChatClient 的格式转换问题
      *
      * @param imageUrl 图片URL
      * @param question 问题/指令
@@ -48,7 +53,7 @@ public class MultiClientService {
         OpenAiApi doubaoApi = baseOpenAiApi.mutate()
                 .baseUrl("https://ark.cn-beijing.volces.com")
                 .apiKey(System.getenv("ARK_API_KEY"))
-                .completionsPath("/api/v3/chat/completions")
+                .completionsPath("/api/v3/responses")
                 .build();
 
         OpenAiChatModel doubaoModel = baseChatModel.mutate()
@@ -67,6 +72,39 @@ public class MultiClientService {
                 .fluentPut("text", question)
         );
         UserMessage userMessage = new UserMessage(content.toJSONString());
+
+        return ChatClient.builder(doubaoModel).build()
+                .prompt()
+                .messages(userMessage)
+                .call()
+                .content();
+    }
+
+    public String imageClientFlowMedia(String imageUrl, String question) throws MalformedURLException {
+        // 豆包 Chat Completions API 配置
+        OpenAiApi doubaoApi = baseOpenAiApi.mutate()
+                .baseUrl("https://ark.cn-beijing.volces.com")
+                .apiKey(System.getenv("ARK_API_KEY"))
+                .completionsPath("/api/v3/chat/completions")
+                .build();
+
+        OpenAiChatModel doubaoModel = baseChatModel.mutate()
+                .openAiApi(doubaoApi)
+                .defaultOptions(OpenAiChatOptions.builder()
+                        .model("doubao-seed-2-0-mini-260215")
+                        .build())
+                .build();
+
+        // 使用 Media 对象构建多模态消息：图片 + 文本
+        Media imageMedia = Media.builder()
+                .mimeType(MediaType.IMAGE_PNG)
+                .data(URI.create(imageUrl))
+                .build();
+
+        UserMessage userMessage = UserMessage.builder()
+                .text(question)
+                .media(List.of(imageMedia))
+                .build();
 
         return ChatClient.builder(doubaoModel).build()
                 .prompt()

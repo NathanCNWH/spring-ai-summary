@@ -50,6 +50,11 @@ public class ChatController {
                         @RequestParam(defaultValue = "描述这张图片") String question) throws MalformedURLException {
         return multiClientService.imageClientFlow(imageUrl, question);
     }
+    @GetMapping("/vision2")
+    public String vision2(@RequestParam String imageUrl,
+                        @RequestParam(defaultValue = "描述这张图片") String question) throws MalformedURLException {
+        return multiClientService.imageClientFlowMedia(imageUrl, question);
+    }
 
     /**
      * 普通的聊天接口

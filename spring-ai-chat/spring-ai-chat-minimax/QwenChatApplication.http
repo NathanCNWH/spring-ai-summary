@@ -18,4 +18,11 @@ GET http://localhost:8085/api/minimax/chattoJson
 <> 2026-04-21T223954.500.json
 
 ###vision
-GET http://localhost:8085/api/minimax/vision?question=描述图片&imageUrl=https://ark-project.tos-cn-beijing.volces.com/doc_image/ark_demo_img_1.png
+GET http://localhost:8085/api/minimax/vision?question=上面写了写什么&imageUrl=https://ark-project.tos-cn-beijing.volces.com/doc_image/ark_demo_img_1.png
+
+
+###vision2
+GET http://localhost:8085/api/minimax/vision2?question=上面写了写什么&imageUrl=https://ark-project.tos-cn-beijing.volces.com/doc_image/ark_demo_img_1.png
+
+
+
