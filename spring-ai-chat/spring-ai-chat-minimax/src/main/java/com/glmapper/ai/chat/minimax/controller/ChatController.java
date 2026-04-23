@@ -134,7 +134,6 @@ public class ChatController {
     @GetMapping("/chattoJson")
     public String chattoJson() {
 
-        //非思考模型可以直接输出，但是思考模型必须手动去掉think标签
         String userInput = "请将下面内容转为json格式，"+
                 "  \"name\": \"张三\",\n" +
                 "  \"age\": 18,\n 注意，只输出json，不要输出其他内容" ;
