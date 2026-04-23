@@ -99,7 +99,7 @@ public class ChatController {
      * @param request 流式聊天请求
      * @return 流式返回内容
      */
-    @GetMapping(value = "/chat_stream", produces = "text/event-stream;charset=UTF-8")
+    @GetMapping(value = "/chat_stream")
     public Flux<String> chatStream(StreamChatRequest request) {
         return chatClient.prompt()
                 .user(request.getUserInput())

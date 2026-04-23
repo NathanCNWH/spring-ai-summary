@@ -22,8 +22,12 @@ GET http://localhost:8085/actuator/metrics/ai.prompt.tokens
 GET http://localhost:8085/api/minimax/chat_multi
 
 
-###流式
+###流式 全局配置
 GET http://localhost:8085/api/minimax/chat_stream?userInput="讲个笑话"
+Accept: text/event-stream
+
+###流式 单个接口
+GET http://localhost:8085/api/minimax/chat_stream2?userInput="讲个笑话"
 Accept: text/event-stream
 
 ###图片识别
