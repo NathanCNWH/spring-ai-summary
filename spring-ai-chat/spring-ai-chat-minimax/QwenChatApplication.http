@@ -21,8 +21,5 @@ GET http://localhost:8085/api/minimax/chattoJson
 GET http://localhost:8085/api/minimax/vision?question=上面写了写什么&imageUrl=https://ark-project.tos-cn-beijing.volces.com/doc_image/ark_demo_img_1.png
 
 
-###vision2
-GET http://localhost:8085/api/minimax/vision2?question=上面写了写什么&imageUrl=https://ark-project.tos-cn-beijing.volces.com/doc_image/ark_demo_img_1.png
-
 
 
